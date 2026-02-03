@@ -1,0 +1,27 @@
+{
+  "name": "pos_searcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "build:css": "postcss src/renderer/style.css -o src/renderer/output.css",
+    "watch:css": "postcss src/renderer/style.css -o src/renderer/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "dotenv": "^17.2.3",
+    "electron": "^40.1.0",
+    "mssql": "^12.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.24",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.18"
+  }
+}
