@@ -9,7 +9,7 @@
 
 <body class="bg-gray-100 p-8">
   <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Consulta de Inventario</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Busqueda Sifac POS</h1>
 
     <input type="text" id="busqueda" placeholder="Escribe referencia o descripción..."
       class="w-full p-4 rounded-lg shadow border-none focus:ring-2 focus:ring-blue-500 transition">
@@ -18,12 +18,87 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referencia</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descripcion</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Precio</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cantidad</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase"></th>
           </tr>
         </thead>
-        <tbody id="resultados" class="divide-y divide-gray-200">
+        <tbody id="resultado" class="divide-y divide-gray-200">
+
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-4 py-3">
+              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: 00123 + INT-44</p>
+              <p class="font-bold text-gray-800">Descripción del Producto Profesional</p>
+            </td>
+            <td class="px-4 py-3 text-center text-green-600 font-bold">$1.000</td>
+            <td class="px-4 py-3 text-center font-medium">10</td>
+            <td class="px-4 py-3 text-center">
+              <button
+                class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition text-sm">
+                Copiar
+              </button>
+            </td>
+          </tr>
+
+          <tr class="bg-gray-50/50">
+            <td colspan="4" class="px-4 py-2">
+              <div class="flex justify-between text-xs text-gray-500 italic">
+                <p><span class="font-semibold text-gray-700">Ubicación:</span> Frente A</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> 12 k14</p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> 10 unidades</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-4 py-3">
+              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: 00123 + INT-44</p>
+              <p class="font-bold text-gray-800">Descripción del Producto Profesional</p>
+            </td>
+            <td class="px-4 py-3 text-center text-green-600 font-bold">$1.000</td>
+            <td class="px-4 py-3 text-center font-medium">10</td>
+            <td class="px-4 py-3 text-center">
+              <button
+                class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition text-sm">
+                Copiar
+              </button>
+            </td>
+          </tr>
+
+          <tr class="bg-gray-50/50">
+            <td colspan="4" class="px-4 py-2">
+              <div class="flex justify-between text-xs text-gray-500 italic">
+                <p><span class="font-semibold text-gray-700">Ubicación:</span> Frente A</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> 12 k14</p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> 10 unidades</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-4 py-3">
+              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: 00123 + INT-44</p>
+              <p class="font-bold text-gray-800">Descripción del Producto Profesional</p>
+            </td>
+            <td class="px-4 py-3 text-center text-green-600 font-bold">$1.000</td>
+            <td class="px-4 py-3 text-center font-medium">10</td>
+            <td class="px-4 py-3 text-center">
+              <button
+                class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition text-sm">
+                Copiar
+              </button>
+            </td>
+          </tr>
+
+          <tr class="bg-gray-50/50">
+            <td colspan="4" class="px-4 py-2">
+              <div class="flex justify-between text-xs text-gray-500 italic">
+                <p><span class="font-semibold text-gray-700">Ubicación:</span> Frente A</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> 12 k14</p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> 10 unidades</p>
+              </div>
+            </td>
+          </tr>
+
         </tbody>
       </table>
     </div>

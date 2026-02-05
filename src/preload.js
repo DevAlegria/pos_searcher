@@ -1,5 +1,6 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, clipboard } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  buscarProductos: (termino) => ipcRenderer.invoke('buscar-productos', termino)
+  buscarProductos: (termino) => ipcRenderer.invoke('buscar-productos', termino),
+  copiarTexto: (texto) => clipboard.writeText(texto)
 });
