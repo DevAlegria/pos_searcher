@@ -39,7 +39,7 @@ ipcMain.handle('buscar-productos', async (event, termino) => {
                         strReferencia, 
                         strDescripcion, 
                         intCantidad, 
-                        intPrecio, 
+                        intValorUnitario, 
                         strCodigo 
                     FROM tblInventario`;
 

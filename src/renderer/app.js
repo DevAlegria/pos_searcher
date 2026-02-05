@@ -10,7 +10,7 @@ async function cargarDatos(termino = '') {
               <p class="text-xs text-gray-400 uppercase font-semibold">Ref: ${p.strReferencia} ${p.strCodigo ? `/ ${p.strCodigo}` : ''}</p>
               <p class="font-bold text-gray-800">${p.strDescripcion}</p>
             </td>
-            <td class="px-4 py-3 text-center text-green-600 font-bold">$${p.intPrecio}</td>
+            <td class="px-4 py-3 text-center text-green-600 font-bold">$${p.intValorUnitario}</td>
             <td class="px-4 py-3 text-center font-medium">${p.intCantidad}</td>
             <td class="px-4 py-3 text-center">
               <button 
