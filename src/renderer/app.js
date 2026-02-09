@@ -50,8 +50,7 @@ async function searchProductStore(reference){
 }
 
 window.copiarAlPortapapeles = (texto, boton) => {
-  console.log(texto);
-  
+
     window.api.copiarTexto(texto);
 
     // Feedback visual profesional

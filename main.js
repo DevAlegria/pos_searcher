@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, clipboard } = require('electron');
 const path = require('path');
 const sql = require('mssql');
 
@@ -93,6 +93,10 @@ ipcMain.handle('search-product', async (event, reference) => {
         console.error("Error en búsqueda de producto:", err);
         return [];
     }
+});
+
+ipcMain.on('copiar-a-portapapeles', (event, texto) => {
+    clipboard.writeText(texto);
 });
 
 app.whenReady().then(createWindow);
