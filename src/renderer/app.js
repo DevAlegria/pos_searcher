@@ -4,7 +4,16 @@ const tablaResultados = document.getElementById('resultados');
 async function cargarDatos(termino = '') {
     const productos = await window.api.buscarProductos(termino);
 
-    tablaResultados.innerHTML = productos.map(p => `
+    const productsAndLocation = await Promise.all(productos.map(async (p)=>{
+      const details = await searchProductStore(p.strReferencia);
+      const stockBodega = details.length > 0 ? details[0].intCantidad : 0;
+      return {
+        ...p,
+        intStore: stockBodega
+      }
+    }))
+
+    tablaResultados.innerHTML = productsAndLocation.map(p => `
         <tr class="hover:bg-gray-50 transition-colors">
             <td class="px-4 py-3">
               <p class="text-xs text-gray-400 uppercase font-semibold">Ref: ${p.strReferencia} ${p.strCodigo ? `/ ${p.strCodigo}` : ''}</p>
@@ -25,14 +34,19 @@ async function cargarDatos(termino = '') {
             <td colspan="4" class="px-4 py-2">
               <div class="flex justify-between text-xs text-gray-500 italic">
                 <p><span class="font-semibold text-gray-700">Ubicación:</span> Frente A</p>
-                <p><span class="font-semibold text-gray-700">Bodega:</span> 12 k14</p>
-                <p><span class="font-semibold text-gray-700">Total disponible:</span> 10 unidades</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> ${p.intStore} k14</p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${p.intStore + p.intCantidad} unidades</p>
               </div>
             </td>
           </tr>
     `).join('');
 
 
+}
+
+async function searchProductStore(reference){
+  const producto = await window.api.serachProduct(reference);
+  return producto;
 }
 
 window.copiarAlPortapapeles = (texto, boton) => {

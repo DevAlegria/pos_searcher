@@ -28,13 +28,11 @@ async function createWindow() {
     win.loadFile('src/renderer/index.html');
 }
 
-// Escuchador de peticiones del Frontend
 ipcMain.handle('buscar-productos', async (event, termino) => {
     try {
         let pool = await sql.connect(dbConfig);
         let request = pool.request();
-        
-        // Base de la consulta
+
         let query = `SELECT TOP 20 
                         strReferencia, 
                         strDescripcion, 
@@ -44,15 +42,9 @@ ipcMain.handle('buscar-productos', async (event, termino) => {
                     FROM tblInventario`;
 
         if (termino && termino.trim() !== '') {
-            // 1. Limpiamos y separamos el término por espacios
-            // Ejemplo: "kit eco honda" -> ["kit", "eco", "honda"]
             const palabras = termino.trim().split(/\s+/);
-            
-            // 2. Construimos el WHERE dinámico
-            // La primera palabra debe coincidir al inicio (según tu requerimiento)
-            // Las demás pueden estar en cualquier parte.
-            const condiciones = [];
-            
+            const condiciones = [`strReferencia NOT LIKE 'z-%'`];
+
             palabras.forEach((palabra, index) => {
                 const paramName = `p${index}`;
                 if (index === 0) {
@@ -69,13 +61,36 @@ ipcMain.handle('buscar-productos', async (event, termino) => {
             query += ` WHERE ` + condiciones.join(' AND ');
         }
 
-        // 3. Ordenamos por cantidad (De mayor a menor disponibilidad)
         query += ` ORDER BY intCantidad DESC`;
 
         const result = await request.query(query);
         return result.recordset;
     } catch (err) {
         console.error("Error en búsqueda:", err);
+        return [];
+    }
+});
+
+ipcMain.handle('search-product', async (event, reference) => {
+    try {
+        let pool = await sql.connect(dbConfig);
+        let request = pool.request();
+
+        request.input('reference', sql.VarChar, `z-${reference}`);
+
+        const query = `SELECT TOP 1 
+                        strReferencia, 
+                        strDescripcion, 
+                        intCantidad, 
+                        intValorUnitario, 
+                        strCodigo 
+                    FROM tblInventario 
+                    WHERE strReferencia = @reference`;
+
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (err) {
+        console.error("Error en búsqueda de producto:", err);
         return [];
     }
 });
