@@ -1,29 +1,20 @@
 const inputBusqueda = document.getElementById('busqueda');
 const tablaResultados = document.getElementById('resultados');
 
-async function cargarDatos(termino = '') {
-    const productos = await window.api.buscarProductos(termino);
+async function cargarDatos(term = '') {
+    const productsList = await window.api.searchProducts(term);
 
-    const productsAndLocation = await Promise.all(productos.map(async (p)=>{
-      const details = await searchProductStore(p.strReferencia);
-      const stockBodega = details.length > 0 ? details[0].intCantidad : 0;
-      return {
-        ...p,
-        intStore: stockBodega
-      }
-    }))
-
-    tablaResultados.innerHTML = productsAndLocation.map(p => `
+    tablaResultados.innerHTML = productsList.map(product => `
         <tr class="hover:bg-gray-50 transition-colors">
             <td class="px-4 py-3">
-              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: ${p.strReferencia} ${p.strCodigo ? `/ ${p.strCodigo}` : ''}</p>
-              <p class="font-bold text-gray-800">${p.strDescripcion}</p>
+              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: ${product.strReferencia} ${product.strCodigo ? `/ ${product.strCodigo}` : ''}</p>
+              <p class="font-bold text-gray-800">${product.strDescripcion}</p>
             </td>
-            <td class="px-4 py-3 text-center text-green-600 font-bold">$${p.intValorUnitario}</td>
-            <td class="px-4 py-3 text-center font-medium">${p.intCantidad}</td>
+            <td class="px-4 py-3 text-center text-green-600 font-bold">$${product.intValorUnitario}</td>
+            <td class="px-4 py-3 text-center font-medium">${product.intCantidad}</td>
             <td class="px-4 py-3 text-center">
               <button 
-                    onclick="copiarAlPortapapeles('${p.strReferencia}', this)"
+                    onclick="copiarAlPortapapeles('${product.strReferencia}', this)"
                     class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition text-sm">
                     Copiar
                 </button>
@@ -34,8 +25,8 @@ async function cargarDatos(termino = '') {
             <td colspan="4" class="px-4 py-2">
               <div class="flex justify-between text-xs text-gray-500 italic">
                 <p><span class="font-semibold text-gray-700">Ubicación:</span> Frente A</p>
-                <p><span class="font-semibold text-gray-700">Bodega:</span> ${p.intStore} k14</p>
-                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${p.intStore + p.intCantidad} unidades</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> ${'cantidad'} k14</p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${''} unidades</p>
               </div>
             </td>
           </tr>
@@ -44,10 +35,6 @@ async function cargarDatos(termino = '') {
 
 }
 
-async function searchProductStore(reference){
-  const producto = await window.api.serachProduct(reference);
-  return producto;
-}
 
 window.copiarAlPortapapeles = (texto, boton) => {
 

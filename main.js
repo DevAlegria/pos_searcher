@@ -4,7 +4,6 @@ const sql = require('mssql');
 
 require('dotenv').config();
 
-// Configuración de tu DB
 const dbConfig = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -28,12 +27,12 @@ async function createWindow() {
     win.loadFile('src/renderer/index.html');
 }
 
-ipcMain.handle('buscar-productos', async (event, termino) => {
+ipcMain.handle('search-products', async (event, term) => {
     try {
         let pool = await sql.connect(dbConfig);
         let request = pool.request();
 
-        let query = `SELECT TOP 20 
+        let query = `SELECT TOP 50 
                         strReferencia, 
                         strDescripcion, 
                         intCantidad, 
@@ -41,9 +40,9 @@ ipcMain.handle('buscar-productos', async (event, termino) => {
                         strCodigo 
                     FROM tblInventario`;
 
-        if (termino && termino.trim() !== '') {
-            const palabras = termino.trim().split(/\s+/);
-            const condiciones = [`strReferencia NOT LIKE 'z-%'`];
+        if (term && term.trim() !== '') {
+            const palabras = term.trim().split(/\s+/);
+            const condiciones = [];
 
             palabras.forEach((palabra, index) => {
                 const paramName = `p${index}`;
@@ -61,15 +60,15 @@ ipcMain.handle('buscar-productos', async (event, termino) => {
             query += ` WHERE ` + condiciones.join(' AND ');
         }
 
-        query += ` ORDER BY intCantidad DESC`;
+        query += ` ORDER BY CASE WHEN intCantidad <= 0 THEN 1 ELSE 0 END ASC, intValorUnitario DESC`;
 
         const result = await request.query(query);
         return result.recordset;
-    } catch (err) {
+    }catch (err) {
         console.error("Error en búsqueda:", err);
         return [];
     }
-});
+})
 
 ipcMain.handle('search-product', async (event, reference) => {
     try {
