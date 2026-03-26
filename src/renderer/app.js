@@ -27,8 +27,8 @@ async function cargarDatos(term = '') {
             <td colspan="4" class="px-4 py-2">
               <div class="flex justify-between text-xs text-gray-500 italic">
                 <p><span class="font-semibold text-gray-700">Ubicación:</span> ${product.location}</p>
-                <p><span class="font-semibold text-gray-700">Bodega:</span> ${product.storage ? product.storage.quantity : '0'} k14</p>
-                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${product.quantity} unidades</p>
+                <p><span class="font-semibold text-gray-700">Bodega:</span> ${product.storage ? product.storage.quantity + ' ' + product.storage.location : '0'} </p>
+                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${product.quantity + (product.storage ? product.storage.quantity : 0)} unidades</p>
               </div>
             </td>
           </tr>

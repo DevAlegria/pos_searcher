@@ -37,7 +37,8 @@ ipcMain.handle('search-products', async (event, term) => {
                         strDescripcion, 
                         intCantidad, 
                         intValorUnitario, 
-                        strCodigo 
+                        strCodigo,
+                        strUbicacion 
                     FROM tblInventario`;
 
         if (term && term.trim() !== '') {
