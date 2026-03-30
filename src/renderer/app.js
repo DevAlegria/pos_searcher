@@ -3,8 +3,7 @@ const tablaResultados = document.getElementById('resultados');
 
 async function cargarDatos(term = '') {
   const productsList = await window.api.searchProducts(term);
-  const mapProducts = getMapProducts(productsList);
-  const productsArray = Array.from(mapProducts.values());
+  const productsArray = getProductsArray(productsList);
 
   tablaResultados.innerHTML = productsArray.map(product => `
         <tr class="hover:bg-gray-50 transition-colors">
@@ -91,6 +90,39 @@ function getMapProducts(products) {
   });
 
   return mapProducts;
+}
+
+function getProductsArray(products) {
+  const mapProducts = new Map();
+  products.forEach(
+    product => {
+      const referenceStartsWithZ = product.strReferencia.startsWith('Z-');
+      const referenceKey = referenceStartsWithZ ? product.strReferencia.slice(2) : product.strReferencia;
+      if (mapProducts.has(referenceKey)) {
+        const existing = mapProducts.get(referenceKey);
+        if (referenceStartsWithZ) {
+          existing.storage = {
+            location: product.strUbicacion,
+            quantity: product.intCantidad
+          };
+        } else {
+          existing.quantity = product.intCantidad;
+          existing.location = product.strUbicacion;
+        }
+      } else {
+        mapProducts.set(referenceKey, {
+          reference: referenceKey,
+          code: product.strCodigo,
+          description: product.strDescripcion,
+          price: product.intValorUnitario,
+          quantity: referenceStartsWithZ ? null : product.intCantidad,
+          location: referenceStartsWithZ ? null : product.strUbicacion,
+          storage: referenceStartsWithZ ? { location: product.strUbicacion, quantity: product.intCantidad } : null
+        });
+      }
+    }
+  )
+  return Array.from(mapProducts.values());
 }
 
 window.copiarAlPortapapeles = (texto, boton) => {
