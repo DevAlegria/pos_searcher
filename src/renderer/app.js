@@ -13,7 +13,7 @@ async function cargarDatos(term = '') {
               <p class="font-bold text-gray-800">${product.description}</p>
             </td>
             <td class="px-4 py-3 text-center text-green-600 font-bold">$${product.price}</td>
-            <td class="px-4 py-3 text-center font-medium">${product.quantity}</td>
+            <td class="px-4 py-3 text-center font-medium">${product.quantity !== null ? product.quantity : (product.storage !== null ? product.storage.quantity : 'N/A')}</td>
             <td class="px-4 py-3 text-center">
               <button 
                     onclick="copiarAlPortapapeles('${product.reference}', this)"
@@ -26,8 +26,8 @@ async function cargarDatos(term = '') {
           <tr class="bg-gray-50/50">
             <td colspan="4" class="px-4 py-2">
               <div class="flex justify-between text-xs text-gray-500 italic">
-                <p><span class="font-semibold text-gray-700">Ubicación:</span> ${product.location}</p>
-                <p><span class="font-semibold text-gray-700">Bodega:</span> ${product.storage ? product.storage.quantity + ' ' + product.storage.location : '0'} </p>
+                <p><span class="font-semibold text-gray-700"></span>${product.location ? 'Ubicación: ' + product.location : ''}</p>
+                <p class="${product.storage && product.storage.quantity > 0 ? 'text-green-600' : 'text-red-600'}"><span class="font-semibold "></span> ${product.storage ? 'Bodega: ' + product.storage.quantity + ' ' + product.storage.location : ''} </p>
                 <p><span class="font-semibold text-gray-700">Total disponible:</span> ${product.quantity + (product.storage ? product.storage.quantity : 0)} unidades</p>
               </div>
             </td>
@@ -48,15 +48,22 @@ function getMapProducts(products) {
   const mapProducts = new Map();
   products.forEach(product => {
     if (!product.strReferencia.startsWith('Z-')) {
-      mapProducts.set(product.strReferencia, {
-        reference: product.strReferencia,
-        code: product.strCodigo,
-        description: product.strDescripcion,
-        price: product.intValorUnitario,
-        quantity: product.intCantidad,
-        location: product.strUbicacion,
-        storage: null
-      });
+      if (mapProducts.has('Z-' + product.strReferencia)) {
+        const existing = mapProducts.get('Z-' + product.strReferencia);
+        existing.quantity = product.intCantidad;
+        existing.location = product.strUbicacion;
+      } else {
+
+        mapProducts.set(product.strReferencia, {
+          reference: product.strReferencia,
+          code: product.strCodigo,
+          description: product.strDescripcion,
+          price: product.intValorUnitario,
+          quantity: product.intCantidad,
+          location: product.strUbicacion,
+          storage: null
+        });
+      }
     } else {
       const reference = product.strReferencia.slice(2)
       if (mapProducts.has(reference)) {
@@ -65,11 +72,24 @@ function getMapProducts(products) {
           location: product.strUbicacion,
           quantity: product.intCantidad
         };
+      } else {
+        mapProducts.set(product.strReferencia, {
+          reference: product.strReferencia,
+          code: product.strCodigo,
+          description: product.strDescripcion,
+          price: product.intValorUnitario,
+          quantity: null,
+          location: null,
+          storage: {
+            location: product.strUbicacion,
+            quantity: product.intCantidad
+          }
+        });
       }
     }
 
   });
-  
+
   return mapProducts;
 }
 
