@@ -1,100 +1,127 @@
+import { productItem } from './components/productItem.js';
 const inputBusqueda = document.getElementById('busqueda');
 const tablaResultados = document.getElementById('resultados');
 
 async function cargarDatos(term = '') {
-  const productsList = await window.api.searchProducts(term);
+  const productsList = [];
   const productsArray = getProductsArray(productsList);
-
-  tablaResultados.innerHTML = productsArray.map(product => `
-        <tr class="hover:bg-gray-50 transition-colors">
-            <td class="px-4 py-3">
-              <p class="text-xs text-gray-400 uppercase font-semibold">Ref: ${product.reference} ${product.code ? `/ ${product.code}` : ''}</p>
-              <p class="font-bold text-gray-800">${product.description}</p>
-            </td>
-            <td class="px-4 py-3 text-center text-green-600 font-bold">$${product.price}</td>
-            <td class="px-4 py-3 text-center font-medium">${product.quantity !== null ? product.quantity : (product.storage !== null ? product.storage.quantity : 'N/A')}</td>
-            <td class="px-4 py-3 text-center">
-              <button 
-                    onclick="copiarAlPortapapeles('${product.reference}', this)"
-                    class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition text-sm">
-                    Copiar
-                </button>
-            </td>
-          </tr>
-
-          <tr class="bg-gray-50/50">
-            <td colspan="4" class="px-4 py-2">
-              <div class="flex justify-between text-xs text-gray-500 italic">
-                <p><span class="font-semibold text-gray-700"></span>${product.location ? 'Ubicación: ' + product.location : ''}</p>
-                <p class="${product.storage && product.storage.quantity > 0 ? 'text-green-600' : 'text-red-600'}"><span class="font-semibold "></span> ${product.storage ? 'Bodega: ' + product.storage.quantity + ' ' + product.storage.location : ''} </p>
-                <p><span class="font-semibold text-gray-700">Total disponible:</span> ${product.quantity + (product.storage ? product.storage.quantity : 0)} unidades</p>
-              </div>
-            </td>
-          </tr>
-    `).join('');
-
-
+  
+  tablaResultados.innerHTML = productsArray.map(product => productItem(product)).join('');
 }
 
 /**
- * 
- * @param {*} products 
- * @returns [strReference:{
- *  reference, code, description, price, quantity, location, storage: {location, quantity}
- * }]
+ * @param {Array<Object>} products
+ * @returns {Array<{
+ *  reference: string,
+ *  code: string,
+ *  description: string,
+ *  price: number,
+ *  quantity: number|null,
+ *  location: string|null,
+ *  storage: { location: string, quantity: number } | null
+ * }>}
  */
-function getMapProducts(products) {
-  const mapProducts = new Map();
-  products.forEach(product => {
-    if (!product.strReferencia.startsWith('Z-')) {
-      if (mapProducts.has('Z-' + product.strReferencia)) {
-        const existing = mapProducts.get('Z-' + product.strReferencia);
-        existing.quantity = product.intCantidad;
-        existing.location = product.strUbicacion;
-      } else {
-
-        mapProducts.set(product.strReferencia, {
-          reference: product.strReferencia,
-          code: product.strCodigo,
-          description: product.strDescripcion,
-          price: product.intValorUnitario,
-          quantity: product.intCantidad,
-          location: product.strUbicacion,
-          storage: null
-        });
-      }
-    } else {
-      const reference = product.strReferencia.slice(2)
-      if (mapProducts.has(reference)) {
-        const existing = mapProducts.get(reference);
-        existing.storage = {
-          location: product.strUbicacion,
-          quantity: product.intCantidad
-        };
-      } else {
-        mapProducts.set(product.strReferencia, {
-          reference: product.strReferencia,
-          code: product.strCodigo,
-          description: product.strDescripcion,
-          price: product.intValorUnitario,
-          quantity: null,
-          location: null,
-          storage: {
-            location: product.strUbicacion,
-            quantity: product.intCantidad
-          }
-        });
-      }
-    }
-
-  });
-
-  return mapProducts;
-}
-
 function getProductsArray(products) {
   const mapProducts = new Map();
-  products.forEach(
+
+// 🟢 1. Solo en local (con stock)
+mapProducts.set('P001', {
+  reference: 'P001',
+  description: 'Bujía NGK',
+  price: 15,
+  quantity: 10,
+  location: 'MOSTRADOR',
+  storage: null
+});
+
+// 🟢 2. Solo en local (sin stock)
+mapProducts.set('P002', {
+  reference: 'P002',
+  description: 'Filtro de aire',
+  price: 20,
+  quantity: 0,
+  location: 'ESTANTE A',
+  storage: null
+});
+
+// 🔵 3. Solo en bodega (con stock)
+mapProducts.set('P003', {
+  reference: 'P003',
+  description: 'Kit arrastre',
+  price: 120,
+  quantity: null,
+  location: null,
+  storage: {
+    location: 'BODEGA',
+    quantity: 8
+  }
+});
+
+// 🔵 4. Solo en bodega (sin stock)
+mapProducts.set('P004', {
+  reference: 'P004',
+  description: 'Pastillas de freno',
+  price: 35,
+  quantity: null,
+  location: null,
+  storage: {
+    location: 'zx-004',
+    quantity: 0
+  }
+});
+
+// 🟡 5. Local con stock, bodega sin stock
+mapProducts.set('P005', {
+  reference: 'P005',
+  description: 'Aceite 4T',
+  price: 25,
+  quantity: 6,
+  location: 'MOSTRADOR',
+  storage: {
+    location: 'BODEGA',
+    quantity: 0
+  }
+});
+
+// 🟡 6. Local sin stock, bodega con stock
+mapProducts.set('P006', {
+  reference: 'P006',
+  description: 'Cadena',
+  price: 80,
+  quantity: 0,
+  location: 'ESTANTE B',
+  storage: {
+    location: 'BODEGA',
+    quantity: 12
+  }
+});
+
+// 🟡 7. Local y bodega con stock
+mapProducts.set('P007', {
+  reference: 'P007',
+  description: 'Disco de freno',
+  price: 150,
+  quantity: 3,
+  location: 'VITRINA',
+  storage: {
+    location: 'BODEGA',
+    quantity: 5
+  }
+});
+
+// 🔴 8. Sin stock en ningún lado
+mapProducts.set('P008', {
+  reference: 'P008',
+  description: 'Guaya acelerador',
+  price: 18,
+  quantity: 0,
+  location: 'ESTANTE C',
+  storage: {
+    location: 'BODEGA',
+    quantity: 0
+  }
+})
+products.forEach(
     product => {
       const referenceStartsWithZ = product.strReferencia.startsWith('Z-');
       const referenceKey = referenceStartsWithZ ? product.strReferencia.slice(2) : product.strReferencia;
